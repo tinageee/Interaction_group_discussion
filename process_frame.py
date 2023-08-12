@@ -20,12 +20,14 @@ output: discussion_data_with_speaker.csv
 '''
 import pandas as pd
 import os
+import datetime
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 # read all frames info from complied file
 frame_info = pd.read_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/compiled_data.csv')
+
 
 # group by game and idx_timestamp, for each group, rank speakers by their length of speech then the idx_transcripts
 # create a column count the length of speech
@@ -94,5 +96,22 @@ frame_info[(frame_info['game'] == 'SG4111') & (frame_info['idx_timestamp'] == 2)
 # find SG4111, frame 12-72, speaker_1 should be 'Charlie', speaker_2 should be 'Bravo'
 discussion_data[(discussion_data['game'] == 'SG4111') & (discussion_data['frame'] >= 12) & (discussion_data['frame'] <= 72)][['game','frame','speaker_1','speaker_2']]
 
+
+# check missing data
+discussion_data.isnull().sum()/len(discussion_data)
+#  0.131766 - speaker_1
+
+# add a column to indicate whether the interaction status of the player
+#  speaking: player is also the speaker_1
+#  interacting: player in speaker2,3,4,5
+#  listening: player is not in the speaker list
+#  Silence: all nan
+discussion_data['interaction'] = discussion_data.apply(
+       lambda x: 'Speaking' if x['player'] == x['speaker_1']
+       else 'Interacting' if x['player'] in x[['speaker_2','speaker_3','speaker_4','speaker_5']].values
+       else 'Listening' if not pd.isnull(x['speaker_1']) else 'Silence', axis=1)
+
 # save discussion_data to csv
+# add timestamp to the file name
+discussion_data.to_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/discussion_data_add_speakers_{}.csv'.format(datetime.datetime.now().strftime("%Y%m%d")), index=False)
 discussion_data.to_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/discussion_data_add_speakers.csv', index=False)

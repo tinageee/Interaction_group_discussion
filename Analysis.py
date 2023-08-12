@@ -18,9 +18,7 @@ df = pd.read_csv(input_data, dtype={19: 'object', 20: 'object'})
 
 df.info()
 
-# check missing data
-df.isnull().sum()/len(df)
-#  0.131766
+
 
 
 
