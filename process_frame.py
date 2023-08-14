@@ -80,12 +80,13 @@ for game in frame_info['game'].unique():
     for idx in frame_info[frame_info['game'] == game]['idx_timestamp'].unique():
             start_frame = frame_info[(frame_info['game'] == game) & (frame_info['idx_timestamp'] == idx)]['start_frame'].values[0]
             end_frame = frame_info[(frame_info['game'] == game) & (frame_info['idx_timestamp'] == idx)]['end_frame'].values[0]
-            # if the frame falls in the range of start_frame and end_frame, assign the column  ['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5']  to discussion_data
-            discussion_data.loc[(discussion_data['game'] == game) & (discussion_data['frame'] >= start_frame) & (discussion_data['frame'] <= end_frame), ['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5']] = frame_info[(frame_info['game'] == game) & (frame_info['idx_timestamp'] == idx)][['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5']].values[0]
+            # if the frame falls in the range of start_frame and end_frame, assign the column  ['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5','idx_timestamp'] to the frame
+            discussion_data.loc[(discussion_data['game'] == game) & (discussion_data['frame'] >= start_frame) & (discussion_data['frame'] <= end_frame), ['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5','idx_timestamp']] = frame_info[(frame_info['game'] == game) & (frame_info['idx_timestamp'] == idx)][['speaker_1','speaker_2','speaker_3','speaker_4','speaker_5','idx_timestamp']].values[0]
 
 discussion_data.replace({'A': 'Alpha', 'B': 'Bravo', 'C': 'Charlie', 'D': 'Delta', 'E': 'Echo'}, inplace=True)
 discussion_data.rename(columns={'Subject': 'player'}, inplace=True)
 discussion_data['stage'] = 'Discussion'
+discussion_data['speaker'] = discussion_data['speaker_1']
 
 # cross check if the speaker value is assigned correctly
 # print out sg4111 and idx_timestamp 2 in frame_info
