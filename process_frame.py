@@ -26,15 +26,15 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 # read all frames info from complied file
-frame_info = pd.read_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/compiled_data.csv')
+frame_info = pd.read_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/data/compiled_data.csv')
 
 
 # group by game and idx_timestamp, for each group, rank speakers by their length of speech then the idx_transcripts
 # create a column count the length of speech
 # create a new df,frame_speaker, group by game ,speaker,and  idx_timestamp,for each group, combine the 'text' if same 'speaker', keep game ,speaker,and  idx_timestamp
 frame_speakers = frame_info.groupby(['game', 'idx_timestamp','speaker','start_y','end_y'])['text'].apply(' '.join).reset_index()
-# for each  game and  idx_timestamp,rank speaker by length of speech.
-frame_speakers['length_speech'] = frame_speakers.groupby(['game', 'speaker', 'idx_timestamp','start_y','end_y'])['text'].transform(lambda x: len(' '.join(x)))
+# for each  game and  idx_timestamp,rank speaker by length of speech, by the number of words in the text
+frame_speakers['length_speech'] = frame_speakers['text'].apply(lambda x: len(x.split()))
 frame_speakers['rank'] = frame_speakers.groupby(['game', 'idx_timestamp','start_y','end_y'])['length_speech'].rank(method='first', ascending=False)
 
 # long to wide
@@ -44,9 +44,13 @@ frame_info=frame_speakers_wide
 #  unique combination of game and idx_timestamp should same as number of unique combination should be the same as 'game', 'idx_timestamp','start_y','end_y'
 frame_info.groupby(['game', 'idx_timestamp']).ngroups == frame_info.groupby(['game', 'idx_timestamp','start_y','end_y']).ngroups
 
-# change the column names and save frame_speakers_wide to csv
+# change the column names and save frame_info to csv
 frame_info.columns = ['game', 'idx_timestamp','start_frame', 'end_frame', 'speaker_1', 'speaker_2', 'speaker_3', 'speaker_4', 'speaker_5']
 frame_info.to_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/frame_info.csv', index=False)
+
+#save frame_speakers to csv
+frame_speakers.to_csv('/Users/saiyingge/Resume_Study_DATA/group_discussion/frame_speakers.csv', index=False)
+
 
 ### read the group discussion data
 file_fold ='/Users/saiyingge/**Research Projects/Resume/data/faceplus'
