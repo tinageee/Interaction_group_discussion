@@ -31,7 +31,7 @@ rated_List= game_info.columns[game_info.columns.str.contains('rated_by')].tolist
 
 
 # descriptive statistics
-# TODO: 1.  include some statistic about the interaction:
+# 1.  include some statistic about the interaction:
 #  add the average numbers of frames in each group/ the terms
 # read all frames info from complied file
 
@@ -279,7 +279,7 @@ timestamp_agg['median_timestamp'] = timestamp_agg['game'].map(medians)
 # Determine whether each timestamp is in the first half or second half
 timestamp_agg['half'] = ['1st-Half' if ts <= median else '2rd-Half' for ts, median in zip(timestamp_agg['idx_timestamp'], timestamp_agg['median_timestamp'])]
 
-#TODO: check the pooling mean. variance, then run analysis
+# check the pooling mean. variance, then run analysis
 
 # player,  interaction state, interacting with whom [same team or different team], first half or second half
 # by player, by player + diff interaction state, by player + diff interaction + first half, second half
@@ -397,6 +397,8 @@ grouByColumns=['game','player', 'interaction','half']
 pool_and_two_way_anova(timestamp_agg, grouByColumns, 'half', 'interaction')
 grouByColumns=['game','player', 'interaction_alter', 'half']
 pool_and_two_way_anova(timestamp_agg, grouByColumns, 'half', 'interaction_alter')
+
+# no role, group, time change difference between interaction on pooled variance pitch, roll, yaw in discussion
 
 # TODO emotion analysis
 
